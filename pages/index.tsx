@@ -1,61 +1,72 @@
-import styles from '../styles/Home.module.css'
+import { useState } from "react";
+const { Configuration, OpenAIApi } = require("openai");
+import { Triangle } from "react-loader-spinner";
+import DisplayImage from "../components/DisplayImage"
 
 export default function Home() {
+  const [prompt, setPrompt] = useState("A cyberpunk monster in a control room");
+  const [result, setResult] = useState(["/cyberpunk.webp"]);
+
+  
+
+  const openai = new OpenAIApi(
+    new Configuration({ apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY })
+  );
+  const generateImage = async () => {
+    setResult([]);
+    setPrompt("");
+
+    const res = await openai.createImage({
+      prompt: prompt,
+      n: 1,
+      size: "512x512",
+    });
+    setResult([res.data.data[0].url]);
+    setPrompt(prompt)
+    
+  };
   return (
-    <div className={styles.container}>
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
+    <div className=" h-screen flex flex-col items-center justify-between">
+      <h2 className="text-3xl text-center mt-3">WALL-E</h2>
 
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
+      <div className="flex flex-col items-center">
+        <p>{prompt}</p>
 
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/canary/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+        
+       
+        {result.length < 1 ? (
+          <Triangle
+            height="80"
+            width="80"
+            color="#4fa94d"
+            ariaLabel="triangle-loading"
+            wrapperStyle={{}}
+            visible={true}
+          />
+        ) : (
+          <DisplayImage result={result}/>
+        )}
+        <textarea
+          className="text-xs border border-gray-500 p-2 rounded-md border-dotted"
+          placeholder="Enter a text prompt to generate an Image."
+          onChange={(e) => setPrompt(e.target.value)}
+          rows={2}
+          cols={40}
+        />
+        <button
+          className="bg-green-600 px-2 py-1 mt-2 rounded-lg"
+          onClick={generateImage}
         >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
+          Generate an Image
+        </button>
+      </div>
+
+      <p className="text-xs text-center font-extralight">
+        &copy; Designed and Developed by{" "}
+        <a className="underline font-bold" href="madanbajgai.com.np">
+          Madan Bazgai
         </a>
-      </footer>
+      </p>
     </div>
-  )
+  );
 }

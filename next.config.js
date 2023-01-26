@@ -4,5 +4,8 @@ const withPWA = require('next-pwa')({
 })
 
 module.exports = withPWA({
+  images: {
+    domains: ['oaidalleapiprodscus.blob.core.windows.net'],
+  },
   // config
 })
