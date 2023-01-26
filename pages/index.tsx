@@ -6,8 +6,6 @@ import DisplayImage from "../components/DisplayImage"
 export default function Home() {
   const [prompt, setPrompt] = useState("A cyberpunk monster in a control room");
   const [result, setResult] = useState(["/cyberpunk.webp"]);
-
-  console.log(process.env.NEXT_PUBLIC_OPENAI_API_KEY);
   
 
   const openai = new OpenAIApi(
